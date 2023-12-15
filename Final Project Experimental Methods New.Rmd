@@ -39,6 +39,112 @@ Then, in order to use the ganiometer to collect data from 8 arm angles. We teste
  
 # Results 
 
+```{r setupt, include = FALSE, message = FALSE}
+library(tidyverse)
+library(MuMIn)
+library(ggplot2)
+library(knitr)
+library(dplyr)
+```
+
+```{r, input, include = FALSE, echo = FALSE}
+f <- list.files("data for final project exp meth", pattern = ".csv", full.names=TRUE)
+dat.l <- list()
+
+for(i in f){
+  cleaned_i <- gsub(".csv", "", i)
+  met.dat<- unlist(strsplit(cleaned_i,"_"))
+  met.dat1 <- unlist(strsplit(met.dat[1], "/"))
+  count <- 
+  who <- met.dat1[2]
+  ang <- as.numeric(met.dat[2])
+  hand <- met.dat[3]
+  dat.l[[i]]<- read_csv(i) %>%
+    rename(force = 1) %>% 
+    filter(!is.na(force) & force > 0) %>% 
+    mutate(count = row_number(), who = who, angle = ang, hand = hand) %>% 
+    select(count, everything())
+}
+
+dat <- do.call(rbind,dat.l)
+print(dat)
+
+filtered_data<-dat%>%
+  group_by(hand)%>%
+  mutate(normF=abs(force/max(force))) %>%
+  print()
+```
+
+```{r, plot, echo = FALSE, message = FALSE}
+filtered_data%>% 
+  ggplot(aes(x=angle,y=normF,col=hand))+geom_point()+ggtitle("Figure 1: Normalized Fmax vs Angle")
+
+dat_norm_mean<-filtered_data%>%
+  group_by(angle,hand)%>%
+  summarize(Fmax_norm_mean=mean(normF))
+dat_norm_mean%>% 
+  ggplot(aes(x=angle,y=Fmax_norm_mean,col=hand))+geom_point()+labs(y="Mean Normalized Fmax", x="Angle")+ggtitle("Figure 2: Mean normalized Fmax vs Angle")
+```
+
+```{r, aic, echo = FALSE, message = FALSE}
+AICs <- filtered_data %>%
+  group_by(who, hand)%>%
+  summarize(
+    m2=AICc(lm(normF~poly(angle,2))),
+    m3=AICc(lm(normF~poly(angle,3))),
+    m4=AICc(lm(normF~poly(angle,4)))
+  )%>%
+  pivot_longer(m2:m4, names_to="model", values_to="AICc")
+
+AICs %>%
+  kable(caption= "Table 1: AIC values for 2nd, 3rd, and 4th order models")
+```
+
+```{r, prediction, echo = FALSE, message = FALSE, warning = FALSE}
+x.pred<-seq(22.5, 180,length.out=1000)
+
+fits <- filtered_data%>%
+  group_by(who,hand)%>%
+  summarize(
+    m2=predict(lm(normF~poly(angle,2)),newdata=data.frame(angle=x.pred)), 
+    m3=predict(lm(normF~poly(angle,3)),newdata=data.frame(angle=x.pred)), 
+    m4=predict(lm(normF~poly(angle,4)),newdata=data.frame(angle=x.pred)) 
+  )%>%
+  pivot_longer(m2:m4,names_to="model")%>%
+  group_by(who,hand,model)%>%
+  summarize(theta_max=x.pred[which.max(value)])
+
+best.models<-fits%>%
+  left_join(AICs)%>%
+  group_by(who,hand)%>%
+  mutate(best=AICc==min(AICc))%>%
+  filter(best==TRUE)%>%
+  dplyr::select(-best)
+
+best.models %>%
+  kable(caption= "Table 2: Best fitting model due to lowest AICc value and predicted theta max")
+
+anova(lm(theta_max~hand,best.models)) %>%
+  print()
+
+best.models%>%
+  pivot_wider(id_cols=who,names_from = hand,values_from=theta_max)%>%
+  mutate(shift=nondominant-dominant)%>%
+  ungroup()%>%
+  summarize(mean.shift=mean(shift,na.rm=TRUE),se.shift=sd(shift,na.rm=TRUE)/sqrt(length(shift))) %>%
+  kable(caption="Table 3: Mean shift in theta max")
+
+shift.p<-best.models %>%
+  pivot_wider(id_cols= who, names_from=hand, values_from=theta_max)%>%
+  mutate(shift=nondominant-dominant)
+
+shift.p_long<-shift.p %>%
+  pivot_longer(cols=c("dominant","nondominant"), names_to = "Condition")
+
+shift.p_long %>%
+  ggplot(aes(x=who, y=value, fill=Condition)) + geom_bar(stat="identity", position="dodge", width=0.5)+ scale_x_discrete(labels=NULL)+theme_classic()+coord_flip()+ylab("Theta max")+ggtitle("Figure 3: Theta max for each individual subject")
+```
+
 Include any appropriate figures or tables and a narrative of the main results that are important to answering the questions.
 
 # Discussion 
