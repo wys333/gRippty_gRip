@@ -162,6 +162,8 @@ In @nayak2023relationship, the researchers measured the correlation between carr
 
 This study on the grip strength measurement gives insights into the overall strength and function of the forearm and hand muscles, which are crucial assessments for hand rehabilitation programs. Specifically, for the population age 20-22. This study provides a quantified methods and indication for the assessment of rehabilitation progress for the adolescent population.  
 
+For future plan, we intend to measure the sex or hand size or grip position's  effect on the grip strength to obtain a better and more comprehensive insight into the rehabilitation progress for the adolescent population.  
+
 ## Author Contributions 
 
 Julia Curry: Helped set up Arduino unit, Created Skeleton of project report, Wrote Methods. 
