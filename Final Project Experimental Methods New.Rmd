@@ -6,21 +6,15 @@ output: html_document
 bibliography: Final_Project_Bib.bib
 ---
 
-# Introduction 
+## Introduction 
 
-STILL WORKING ON INTRO, FIRST SENTENCE I ADDED BECAUSE IT SHOWS PURPOSE. COPIED NICOLE'S INTRO FROM DOC, NO REFERENCES ADDED YET. 
+The knowledge of how changes in body angle and dominant hand use affect the strength of the grip can be used to design environments and tools to maximize biomechanical abilities for both everyday use and hand rehabitation program.
 
-The knowledge of how changes in body angle and dominant hand use affect the strength of the grip can be used to design environments and tools to maximize biomechanical abilities.
+Grip strength is determined by the coordinated interaction of the brain, nerves, muscles, bones, and joints, enabling the exertion of maximum force through the hand's flexor muscles and finger joints under normal conditions. It is commonly assessed as a component of hand function and is an indicator of patients’ ability for daily activities that involve hand usage. Grip strength measurement gives insights into the overall strength and function of the forearm and hand muscles, which are crucial assessments for hand rehabilitation programs. In @richards1996forearm, published on the The American Journal of Occupational Therapy, the researchers examined the how different forearm position (forearm supination, neutral position, pronation) affect the grip strength and found that forearm supination demonstrated the strongest grip. In our study, we are assessing the position of the forearm as well, but with the focus on the angle between forearm and posterior arm. We aimed to assess the correlation between 8 carrying angles (180 – 22.5, with 12.5 increments) with the grip strength in dominant and nondominant hands of 10 college students (age 20-22).
 
-Grip strength is determined by the coordinated interaction of the brain, nerves, muscles, bones, and joints, enabling the exertion of maximum force through the hand's flexor muscles and finger joints under normal conditions. It is commonly assessed as a component of hand function and is an indicator of patients’ ability for daily activities that involve hand usage. Grip strength measurement gives insights into the overall strength and function of the forearm and hand muscles, which are crucial assessments for hand rehabilitation programs. In this study @richards1996forearm published on the The American Journal of Occupational Therapy, the researchers examined the how different forearm position (forearm supination, neutral position, pronation) affect the grip strength and found that forearm supination demonstrated the strongest grip. In our study, we are assessing the position of the forearm as well, but with the focus on the angle between forearm and posterior arm. We aimed to assess the correlation between 8 carrying angles (180 – 22.5, with 12.5 increments) with the grip strength in dominant and nondominant hands of 10 college students (age 20-22).
+## Methods
 
-INSTRUCTIONS 
-
-Frame the questions, indicating why they are important, what background work has been done in this realm, and how you will answer them. Please include at least one reference to support the summary of previous work. Note: this can be done easily by refiguring the introduction to this project report.
-
-# Methods 
-
-In order to assess the effect of dominant versus non-dominant hand grip strength we measured force data for 8 different angle positions and compared results for dominant hand and non-dominant hand. Our data consisted of 16 data points for 5 different individuals. In order to obtain data we designed and constructed a portable Arduino-based force-data acquisition system (DAQ).
+In order to assess the effect of dominant versus non-dominant hand grip strength, the force data for 8 different angle positions were measured and the results were analysed for dominant hand and non-dominant hand. Our data consisted of 16 data files for each of the 10 Boston college students whose dominant hand are all right hand (160 data files in total). In order to obtain data, we designed and constructed a portable Arduino-based force-data acquisition system (DAQ). 
 
 1. DAQ Design components
 
@@ -28,17 +22,15 @@ In order to assess the effect of dominant versus non-dominant hand grip strength
 
 Arduino Uno microcontroller 
 
-2. Data Collection 
+2. Angle Measurement Setup
 
-Constructed a ganiometer. Then, found the center of the elbow joint in lateral view and marked this position with a marker. From that point, we marked a line along the lateral margin of the radius. We then poked a hole through the center of the ganiometer to affix it to the upper arm so that the center aligns with the mark at the elbow and the 0-180angle axis aligns with the long axis of the humerus. 
+a ganiometer was constructed. Then, found the center of the elbow joint in lateral view and marked this position with a marker. From that point, we marked a line along the lateral margin of the radius. We then poked a hole through the center of the ganiometer to affix it to the upper arm so that the center aligns with the mark at the elbow and the 0-180angle axis aligns with the long axis of the humerus. The wrist was completely aligned with the forearm to prevent any force exerted from the wrist. This arm position allows for complete isolation of the hand for more accurate measurement of the grip strength. 
 
-3. Data Collection Isometric MVCs
+3. Data Collection
 
-Then, in order to use the ganiometer to collect data from 8 arm angles. We tested grip strength at the angles of 180, 157.5, 135, 117.5, 90, 67.5, 45, and 22.5. We moved through the 8 arm angles by rotating our bodies about the hips. 
+Then, in order to use the ganiometer to collect data from 8 arm angles. We tested grip strength at the angles of 22.5, 45, 67.5, 90, 112.5, 135, 157.5, and 180 degrees. We moved through the 8 arm angles by rotating our arms about the elbow in increasing angles for both dominant and nondominant hands. For each angle measurement, the participants used a soft cloth to wrap the "S" shaped load cell metal block and squeezed the top and bottom for 10 seconds to ensure max values for each angle, with the palm facing forward. While squeezing, the palm is always facing up and the wrist angle is always 180 degrees for each measurement. Each participant rested for 1-2 minutes in between grip strength measurement. 
 
-4. WHAT WE DID IN CODE TO TEST 
- 
-# Results 
+## Results 
 
 ```{r setupt, include = FALSE, message = FALSE}
 library(tidyverse)
@@ -83,7 +75,7 @@ filtered_data%>%
   ggplot(aes(x=angle,y=normF,col=hand))+geom_point()+ggtitle("Figure 1: Normalized Fmax vs Angle")
 ```
 
-Next, we calculated the mean of normalized force for each hand at each carrying angle and plotted in the Figure 2 below.
+Next, we calculated the mean of normalized force for each hand at each carrying angle and plotted in the Figure 2 below. Spearman test was used to determine the correlation between angle and grip strength. 
 
 ```{r, plot2, echo = FALSE, message = FALSE}
 dat_norm_mean<-filtered_data%>%
@@ -91,6 +83,9 @@ dat_norm_mean<-filtered_data%>%
   summarize(Fmax_norm_mean=mean(normF))
 dat_norm_mean%>% 
   ggplot(aes(x=angle,y=Fmax_norm_mean,col=hand))+geom_point()+labs(y="Mean Normalized Fmax", x="Angle")+ggtitle("Figure 2: Mean normalized Fmax vs Angle")
+
+spearman_test <- cor.test(dat_norm_mean$angle, dat_norm_mean$Fmax_norm_mean, method = "spearman")
+print(spearman_test)
 ```
 
 Then we generated three different models (second order, third order, and fourth order) and calculated their AICs values in Table 1 below.
@@ -136,7 +131,7 @@ best.models %>%
   kable(caption= "Table 2: Best fitting model due to lowest AICc value and predicted theta max")
 ```
 
-Finally, we want to know if there is a shift in theta max between dominant hand and non-dominant hand. We calculated the mean and standard error of the shift in theta max below, and the resulting p-value from an ANOVA test of the shift is 0.9798. This result if visualized in Figure 3 below where we compared the theta max of dominant and non-dominant hands for each person.
+Finally, we want to know if there is a shift in theta max between dominant hand and non-dominant hand. We calculated the mean and standard error of the shift in theta max below, and the resulting p-value from an ANOVA test of the shift is 0.6307. This result was visualized in Figure 3 where we compared the theta max of dominant and non-dominant hands for each person.
 
 ```{r, anova, echo = FALSE, message = FALSE, warning = FALSE}
 anova(lm(theta_max~hand,best.models)) %>%
@@ -157,21 +152,27 @@ shift.p_long<-shift.p %>%
   pivot_longer(cols=c("dominant","nondominant"), names_to = "Condition")
 
 shift.p_long %>%
-  ggplot(aes(x=who, y=value, fill=Condition)) + geom_bar(stat="identity", position="dodge", width=0.5)+ scale_x_discrete(labels=NULL)+theme_classic()+coord_flip()+ylab("Theta max")+ggtitle("Figure 3: Theta max for each individual subject")
+  ggplot(aes(x=who, y=value, fill=Condition)) + geom_bar(stat="identity", position="dodge", width=0.5)+ scale_x_discrete(labels= c("Will", "Nicole", "Peter", "Julia", "Leo", "Roy", "Amy", "Chris", "Calvin", "Ryan"))+theme_classic()+coord_flip()+ylab("Theta max")+ggtitle("Figure 3: Theta max for each individual subject")
 ```
 
-# Discussion 
+## Discussion 
+The Spearman correlation showed a p value of 0.002627, which is <0.05. As a result, this indicates that there is a significant negative correlation between elbow angles and grip strength. As the elbow angle decreases, the grip strength increases. The smallest angle correlates with the highest Fmax, thus the greatest grip strength. To assess whether there is a difference between the grip strength and the dominant/nondominant hand, the mean shift of -12.82 shows a p value of <0.6307. This indicates that there is no significance between the effect of dominant and nondominant hand on grip strength, despite a seemingly weaker nondominant hand showed in figure 2. Collectively, the data showed a significant negative correlation between elbow angle and grip strength, regardless of dominant or nondominant hand usage. 
 
-In this paper, the researchers measured the correlation between carrying angle (the angle between the forearm and the upper arm) and grip strength among the 203 participants with a mean age of 22.95 ± 2.11. The results showed a weak negative correlation between carrying angle and grip strength on the left side, but no significant correlation on the right side. 
+In @nayak2023relationship, the researchers measured the correlation between carrying angle (the angle between the forearm and the upper arm) and grip strength among the 203 participants with a mean age of 22.95 ± 2.11. The results showed a weak negative correlation between carrying angle and grip strength on the left side, but no significant correlation on the right side. Our data confirms the negative correlation between angle and grip strength, but does not support the effect of hand dominance on grip strength. This may be a result of small sample size, as this stusy only has 10 participants, compare to the large participant pool in the Nayak study. To verify the result further in the future, a bigger sample size is needed for a holistic review on the study. 
 
-Succinctly declare how the results relate to the question and how they compare to previous work devoted to the topic. In addition, be sure to comment on the importance of your findings to the broader topic at hand.
+This study on the grip strength measurement gives insights into the overall strength and function of the forearm and hand muscles, which are crucial assessments for hand rehabilitation programs. Specifically, for the population age 20-22. This study provides a quantified methods and indication for the assessment of rehabilitation progress for the adolescent population.  
 
-The Introduction and Discussion sections should include no fewer than three references to primary literature sources (i.e., scientific papers) between them. These references should be integrated using @ BibTex tags that automatically place the references in the document using the associated .bib file.
+## Author Contributions 
 
-# Author Contributions 
+Julia Curry: Helped set up Arduino unit, Created Skeleton of project report, Wrote Methods. 
 
-Julia Curry: Helped set up Arduino unit, Created Skeleton of project report, Wrote Methods. <br>
-Yunshu Qiu: Wrote all the codes for data analysis in the result section and helped set up the Arduino unit for data collection.
+Yunshu Qiu: Completed all the codes for data analysis in the result section and helped set up the Arduino unit for data collection.
+
+Nicole Wei: Completed introduction and discussion section. Edited the code for better understanding.
+
+Binghao Deng: Polished materials and methods, and edited the overall writing
+
+Weihang Huang: Organized additional participants for data collection and aided in code writing. 
 
 
 # References 
