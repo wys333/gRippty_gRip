@@ -3,6 +3,7 @@ title: "Relationship Between Dominant Hand and Grip Strength in Young Adults"
 author: "Julia Curry, Yunshu Qiu, Weihang Huang, Nicole Wei, Binghao Deng" 
 date: "2023-12-12"
 output: html_document
+bibliography: Final_Project_Bib.bib
 ---
 
 # Introduction 
@@ -11,7 +12,7 @@ STILL WORKING ON INTRO, FIRST SENTENCE I ADDED BECAUSE IT SHOWS PURPOSE. COPIED 
 
 The knowledge of how changes in body angle and dominant hand use affect the strength of the grip can be used to design environments and tools to maximize biomechanical abilities.
 
-Grip strength is determined by the coordinated interaction of the brain, nerves, muscles, bones, and joints, enabling the exertion of maximum force through the hand's flexor muscles and finger joints under normal conditions. It is commonly assessed as a component of hand function and is an indicator of patients’ ability for daily activities that involve hand usage. Grip strength measurement gives insights into the overall strength and function of the forearm and hand muscles, which are crucial assessments for hand rehabilitation programs. In this paper, the researchers measured the correlation between carrying angle (the angle between the forearm and the upper arm) and grip strength among the 203 participants with a mean age of 22.95 ± 2.11. The results showed a weak negative correlation between carrying angle and grip strength on the left side, but no significant correlation on the right side. In our study, we aimed to assess the correlation between 8 carrying angles (180 – 22.5, with 12.5 increments) with the grip strength in dominant and nondominant hands of 5 college students. 
+Grip strength is determined by the coordinated interaction of the brain, nerves, muscles, bones, and joints, enabling the exertion of maximum force through the hand's flexor muscles and finger joints under normal conditions. It is commonly assessed as a component of hand function and is an indicator of patients’ ability for daily activities that involve hand usage. Grip strength measurement gives insights into the overall strength and function of the forearm and hand muscles, which are crucial assessments for hand rehabilitation programs. In this study @richards1996forearm published on the The American Journal of Occupational Therapy, the researchers examined the how different forearm position (forearm supination, neutral position, pronation) affect the grip strength and found that forearm supination demonstrated the strongest grip. In our study, we are assessing the position of the forearm as well, but with the focus on the angle between forearm and posterior arm. We aimed to assess the correlation between 8 carrying angles (180 – 22.5, with 12.5 increments) with the grip strength in dominant and nondominant hands of 10 college students (age 20-22).
 
 INSTRUCTIONS 
 
@@ -160,6 +161,8 @@ shift.p_long %>%
 ```
 
 # Discussion 
+
+In this paper, the researchers measured the correlation between carrying angle (the angle between the forearm and the upper arm) and grip strength among the 203 participants with a mean age of 22.95 ± 2.11. The results showed a weak negative correlation between carrying angle and grip strength on the left side, but no significant correlation on the right side. 
 
 Succinctly declare how the results relate to the question and how they compare to previous work devoted to the topic. In addition, be sure to comment on the importance of your findings to the broader topic at hand.
 
