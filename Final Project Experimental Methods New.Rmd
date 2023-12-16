@@ -1,6 +1,6 @@
 ---
 title: "Relationship Between Dominant Hand and Grip Strength in Young Adults"
-author: "Julia Curry, "
+author: "Julia Curry, Yunshu Qiu, Weihang Huang, Nicole Wei, Binghao Deng" 
 date: "2023-12-12"
 output: html_document
 ---
@@ -47,6 +47,8 @@ library(knitr)
 library(dplyr)
 ```
 
+We first calculated the normalized force by dividing each force value by the maximum force value measured in that hand. As shown in the Figure 1 below, we plotted the normalized force of dominant hand (red) and non-dominant hand (blue) over the range of 8 carrying angles spanning from 22.5 degree to 180 degree.
+
 ```{r, input, include = FALSE, echo = FALSE}
 f <- list.files("data for final project exp meth", pattern = ".csv", full.names=TRUE)
 dat.l <- list()
@@ -78,13 +80,19 @@ filtered_data<-dat%>%
 ```{r, plot, echo = FALSE, message = FALSE}
 filtered_data%>% 
   ggplot(aes(x=angle,y=normF,col=hand))+geom_point()+ggtitle("Figure 1: Normalized Fmax vs Angle")
+```
 
+Next, we calculated the mean of normalized force for each hand at each carrying angle and plotted in the Figure 2 below.
+
+```{r, plot2, echo = FALSE, message = FALSE}
 dat_norm_mean<-filtered_data%>%
   group_by(angle,hand)%>%
   summarize(Fmax_norm_mean=mean(normF))
 dat_norm_mean%>% 
   ggplot(aes(x=angle,y=Fmax_norm_mean,col=hand))+geom_point()+labs(y="Mean Normalized Fmax", x="Angle")+ggtitle("Figure 2: Mean normalized Fmax vs Angle")
 ```
+
+Then we generated three different models (second order, third order, and fourth order) and calculated their AICs values in Table 1 below.
 
 ```{r, aic, echo = FALSE, message = FALSE}
 AICs <- filtered_data %>%
@@ -99,6 +107,8 @@ AICs <- filtered_data %>%
 AICs %>%
   kable(caption= "Table 1: AIC values for 2nd, 3rd, and 4th order models")
 ```
+
+Next, using the best fit model with the smallest AIC value, we predicted the angle at which normalized force is maximized (theta max) for each hand listed them in Table 2 below
 
 ```{r, prediction, echo = FALSE, message = FALSE, warning = FALSE}
 x.pred<-seq(22.5, 180,length.out=1000)
@@ -123,7 +133,11 @@ best.models<-fits%>%
 
 best.models %>%
   kable(caption= "Table 2: Best fitting model due to lowest AICc value and predicted theta max")
+```
 
+Finally, we want to know if there is a shift in theta max between dominant hand and non-dominant hand. We calculated the mean and standard error of the shift in theta max below, and the resulting p-value from an ANOVA test of the shift is 0.9798. This result if visualized in Figure 3 below where we compared the theta max of dominant and non-dominant hands for each person.
+
+```{r, anova, echo = FALSE, message = FALSE, warning = FALSE}
 anova(lm(theta_max~hand,best.models)) %>%
   print()
 
@@ -145,8 +159,6 @@ shift.p_long %>%
   ggplot(aes(x=who, y=value, fill=Condition)) + geom_bar(stat="identity", position="dodge", width=0.5)+ scale_x_discrete(labels=NULL)+theme_classic()+coord_flip()+ylab("Theta max")+ggtitle("Figure 3: Theta max for each individual subject")
 ```
 
-Include any appropriate figures or tables and a narrative of the main results that are important to answering the questions.
-
 # Discussion 
 
 Succinctly declare how the results relate to the question and how they compare to previous work devoted to the topic. In addition, be sure to comment on the importance of your findings to the broader topic at hand.
@@ -155,7 +167,8 @@ The Introduction and Discussion sections should include no fewer than three refe
 
 # Author Contributions 
 
-Julia Curry: Helped set up Arduino unit, Created Skeleton of project report, Wrote Methods. 
+Julia Curry: Helped set up Arduino unit, Created Skeleton of project report, Wrote Methods. <br>
+Yunshu Qiu: Wrote all the codes for data analysis in the result section and helped set up the Arduino unit for data collection.
 
 
 # References 
